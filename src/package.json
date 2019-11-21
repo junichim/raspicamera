@@ -1,0 +1,20 @@
+{
+  "name": "raspi_camera",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.575.0"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "moment": "^2.24.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.5"
+  }
+}

@@ -1,0 +1,34 @@
+#!/bin/bash
+#
+#
+
+fns="
+    raspiStillCamera
+    "
+
+if [ $# != 2 ]
+then
+    echo "Usage : setLambdEnv aws_profile_name env_file"
+    exit 1
+fi
+
+AWS_PROFILE=$1
+envfn=$2
+
+source $envfn
+
+for fn in ${fns}
+do
+    echo aws --profile $AWS_PROFILE lambda update-function-configuration --function-name "${fn}" --environment "Variables={
+        LINE_CHANNEL_SECRET=${LINE_CHANNEL_SECRET},
+        LINE_CHANNEL_ACCESS_TOKEN=${LINE_CHANNEL_ACCESS_TOKEN},
+        S3_BUCKET_NAME=${S3_BUCKET_NAME}
+        }"
+    aws --profile $AWS_PROFILE lambda update-function-configuration --function-name "${fn}" --environment "Variables={
+        LINE_CHANNEL_SECRET=${LINE_CHANNEL_SECRET},
+        LINE_CHANNEL_ACCESS_TOKEN=${LINE_CHANNEL_ACCESS_TOKEN},
+        S3_BUCKET_NAME=${S3_BUCKET_NAME}
+        }"
+done
+
+
