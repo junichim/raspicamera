@@ -20,7 +20,7 @@ exports.upload = async function(param) {
 
 exports.list = async function(param) {
     return new Promise(function(resolve, reject) {
-        s3.listBuckets(param, function(err, data) {        
+        s3.listObjectsV2(param, function(err, data) {
             if (err) {
                 console.error("list:" + JSON.stringify(err));
                 reject(err);
@@ -33,7 +33,7 @@ exports.list = async function(param) {
 
 exports.get = async function(param) {
     return new Promise(function(resolve, reject) {
-        s3.getObject(param, function(err, data) {        
+        s3.getObject(param, function(err, data) {
             if (err) {
                 console.error("get:" + JSON.stringify(err));
                 reject(err);

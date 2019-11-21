@@ -5,7 +5,7 @@ const childProcess = require('child_process');
 
 exports.getPhoto = async function (imgFn) {
     return new Promise(function(resolve, reject) {
-        childProcess.exec("/usr/bin/raspistill -w640 -h480 -th none -n -t 100 -q 75 -o " + imgFn, function(err, stdout, stderr) {
+        childProcess.exec("/usr/bin/raspistill -w 640 -h 480 -th none -n -t 100 -q 75 -o " + imgFn, function(err, stdout, stderr) {
             if (err) {
                 console.error("getPhoto:" + JSON.stringify(err));
                 console.error("stderr: " + stderr);

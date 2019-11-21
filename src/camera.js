@@ -23,11 +23,13 @@ setInterval(main, PERIOD);
 async function main() {
 
     // S3 ファイルチェック
+    let data;
     try {
-        let data = await getRequestsList();
+        data = await getRequestsList();
     } catch (err) {
         util.handleError(err, "写真撮影リクエストの取得失敗");
     }
+    console.log("S3 request files: " + JSON.stringify(data));
 
     // 撮影指示ファイル分だけループ
     for (let content of data.Contents) {
@@ -49,6 +51,7 @@ async function processRequest(content) {
     } catch(err) {
         util.handleError(err, "撮影指示の取得に失敗");
     }
+    console.log("request is: " + JSON.stringify(request));
 
     // ファイル名生成
     let baseFn = constant.FILE_PRFX.IMAGE_PRFX + moment().utcOffset(constant.JST).format(constant.DATE_FMT.S3_FILENAME_FMT);
@@ -58,7 +61,7 @@ async function processRequest(content) {
     // 写真撮影&サムネイル作成
     try {
         await photo.getPhoto(imgFn);
-        await photo.getThumbnail(thumbFn);
+        await photo.getThumbnail(imgFn, thumbFn);
     } catch(err) {
         util.handleError(err, "写真撮影に失敗");
     }
@@ -115,8 +118,8 @@ async function getRequest(content) {
     } catch(err) {
         util.handleError(err, "S3 内のファイル取得失敗");
     }    
-    console.log("request: " + JSON.stringify(data));
-    return JSON.parse(data.Body);
+    console.log("data: " + JSON.stringify(data));
+    return JSON.parse(data.Body.toString());
 }
 
 async function deleteRequest(content) {
@@ -135,7 +138,7 @@ async function deleteRequest(content) {
 
 async function uploadImage(fn) {
     
-    let fileStream = fs.createReadStream(file);
+    let fileStream = fs.createReadStream(fn);
     fileStream.on('error', function(err) {
         console.log('File Error', err);
         throw new Error(err);
