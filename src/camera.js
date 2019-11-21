@@ -53,6 +53,24 @@ async function processRequest(content) {
     }
     console.log("request is: " + JSON.stringify(request));
 
+    // 写真撮影処理
+    // 成否にかかわらず、撮影指示は削除する
+    try {
+        await processPhoto(request);
+    } catch (err) {
+        console.error("写真撮影処理に失敗: " + JSON.stringify(err));
+    } finally {
+        // S3 撮影指示ファイル削除
+        try {
+            deleteRequest(content);
+        } catch(err) {
+            util.handleError(err, "S3 撮影指示ファイルの削除失敗");
+        }
+    }
+}
+
+async function processPhoto(request) {
+
     // ファイル名生成
     let baseFn = constant.FILE_PRFX.IMAGE_PRFX + moment().utcOffset(constant.JST).format(constant.DATE_FMT.S3_FILENAME_FMT);
     let imgFn = baseFn + IMAGE_EXT;
@@ -66,26 +84,29 @@ async function processRequest(content) {
         util.handleError(err, "写真撮影に失敗");
     }
     
-    // S3 写真アップロード
     try {
+        // S3 写真アップロード
         await uploadImage(imgFn);
         await uploadImage(thumbFn);
-    } catch(err) {
-        util.handleError(err, "写真アップロード失敗");
-    }
 
-    // LINE 返信
-    try {
+        // LINE 返信
         await message.replyImageMessage(request.replyToken, PHOTO_BASE_URL + imgFn, PHOTO_BASE_URL + thumbFn);
-    } catch (err) {
-        util.handleError(err, "LINE 画像メッセージの返信失敗");
-    }    
-
-    // S3 撮影指示ファイル削除
-    try {
-        deleteRequest(content);
     } catch(err) {
-        util.handleError(err, "S3 撮影指示ファイルの削除失敗");
+        console.error("LINE 画像メッセージの返信失敗: " + JSON.stringify(err));
+
+        try {
+            await message.replyTextMessage(request.replyToken, "写真の取得に失敗しました");
+        } catch (err) {
+            util.handleError(err, "LINE メッセージへの返信失敗");
+        }
+    } finally {
+        // ローカル画像ファイルの削除
+        try {
+            await photo.deletePhoto(imgFn);
+            await photo.deletePhoto(thumbFn);
+        } catch(err) {
+            util.handleError(err, "ローカル画像ファイルの削除失敗");
+        }
     }
 }
 

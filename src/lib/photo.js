@@ -30,3 +30,18 @@ exports.getThumbnail = async function (imgFn, thumbFn) {
         });
     });
 }
+
+exports.deletePhoto = async function (fn) {
+    return new Promise(function(resolve, reject) {
+        childProcess.exec("/bin/rm -f " + fn, function(err, stdout, stderr) {
+            if (err) {
+                console.error("deletePhoto:" + JSON.stringify(err));
+                console.error("stderr: " + stderr);
+                reject(err);
+            } else {
+                resolve(stdout);
+            }
+        });
+    });
+}
+
