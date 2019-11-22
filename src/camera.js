@@ -21,7 +21,6 @@ const PHOTO_BASE_URL = process.env.PHOTO_BASE_URL;
 setInterval(main, PERIOD);
 
 async function main() {
-    console.log("start: " + moment().utcOffset(constant.JST).format(constant.DATE_FMT.S3_FILENAME_FMT));
 
     // S3 ファイルチェック
     let data;
@@ -31,7 +30,7 @@ async function main() {
         util.handleError(err, "写真撮影リクエストの取得失敗");
     }
     //console.log("S3 request files: " + JSON.stringify(data));
-    console.log("S3 request num: " + data.Contents.length);
+    console.log("start: " + moment().utcOffset(constant.JST).format(constant.DATE_FMT.S3_FILENAME_FMT) + ", S3 request num: " + data.Contents.length);
 
     // 撮影指示ファイル分だけループ
     for (let content of data.Contents) {
@@ -91,12 +90,12 @@ async function processPhoto(request) {
         await uploadImage(thumbFn);
 
         // LINE 返信
-        await message.replyImageMessage(request.replyToken, PHOTO_BASE_URL + imgFn, PHOTO_BASE_URL + thumbFn);
+        await message.sendImageMessage(request.replyToken, request.userId, PHOTO_BASE_URL + imgFn, PHOTO_BASE_URL + thumbFn);
     } catch(err) {
         console.error("LINE 画像メッセージの返信失敗: " + JSON.stringify(err));
 
         try {
-            await message.replyTextMessage(request.replyToken, "写真の取得に失敗しました");
+            await message.pushMessage(request.userId, "写真の取得に失敗しました");
         } catch (err) {
             util.handleError(err, "LINE メッセージへの返信失敗");
         }

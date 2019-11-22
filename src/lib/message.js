@@ -37,12 +37,37 @@ exports.replyTextMessage = async function (replyToken, msgText) {
 };
 
 /**
+ * 画像メッセージの送信
+ *
+ * 返信でメッセージを送り、失敗したらpushメッセージに切り替えて送る
+ *
+ * @param {String} replyToken
+ * @param {String} 送信したい画像のURL
+ * @param {String} 送信したい画像のサムネイルのURL
+ */
+exports.sendImageMessage = async function (replyToken, lineId, mainImageUrl, thumbImageUrl) {
+    console.log("sendImageMessage start");
+    try {
+        await replyImageMessage(replyToken, mainImageUrl, thumbImageUrl);
+    } catch (err) {
+        console.error("replyImageMessage failed.: " + JSON.stringify(err));
+        console.log("Try to push an image message.");
+
+        try {
+            await pushImageMessage(lineId, mainImageUrl, thumbImageUrl);
+        } catch (err) {
+            util.handleError(err, "sendImageMessage exception occured");
+        }
+    }
+};
+
+/**
  * 画像返信メッセージの送信
  * @param {String} replyToken
  * @param {String} 送信したい画像のURL
  * @param {String} 送信したい画像のサムネイルのURL
  */
-exports.replyImageMessage = async function (replyToken, mainImageUrl, thumbImageUrl) {
+async function replyImageMessage(replyToken, mainImageUrl, thumbImageUrl) {
     console.log("replyImageMessage start");
     console.log("replyToken: " + JSON.stringify(replyToken));
 
@@ -84,7 +109,34 @@ exports.pushMessage = async function (lineId, msgText) {
     try {
         await pushMessageRaw(ACCESS_TOKEN, lineId, messages);
     } catch (err) {
-        util.handleError(err, "replayTextMessage exception occured");
+        util.handleError(err, "pushMessage exception occured");
+    }
+};
+
+/**
+ * 画像の送信（プッシュ送信）
+ * @param {String} lineId
+ * @param {String} 送信したい画像のURL
+ * @param {String} 送信したい画像のサムネイルのURL
+ */
+async function pushImageMessage(lineId, mainImageUrl, thumbImageUrl) {
+    console.log("pushImageMessage start");
+    console.log("destination: " + lineId);
+
+    // 返信文作成
+    let messages = [];
+    let msg = {
+        "type": "image",
+        "originalContentUrl": mainImageUrl,
+        "previewImageUrl": thumbImageUrl,
+    };
+    messages.push(msg);
+
+    // 返信処理
+    try {
+        await pushMessageRaw(ACCESS_TOKEN, lineId, messages);
+    } catch (err) {
+        util.handleError(err, "pushImageMessage exception occured");
     }
 };
 
