@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# camera 取得処理の起動
+#
+
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+SRC_DIR=${SCRIPT_DIR}/../src
+LOG_DIR=${SCRIPT_DIR}/../log
+
+LOG_PRFX="camera_"
+LOG_EXT=".log"
+
+NODE_DIR=/home/pi/.config/nvm/versions/node/v10.17.0/bin
+NODE_BIN=${NODE_DIR}/node
+
+# ログ保存ディレクトリ
+if [ ! -d ${LOG_DIR} ]
+then
+    mkdir -p ${LOG_DIR}
+fi
+
+# 起動
+cd ${SRC_DIR}
+
+LOG_FILE=${LOG_PRFX}$(date "+%Y-%m-%d-%H%M%S")${LOG_EXT}
+
+#node --require dotenv/config camera.js &> ${LOG_DIR}/${LOG_FILE}
+${NODE_BIN}  --require dotenv/config camera.js
+
+
