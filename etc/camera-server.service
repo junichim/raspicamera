@@ -1,0 +1,16 @@
+
+[Unit]
+Description=camera server
+After=syslog.target local-fs.target network-online.target nss-lookup.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pi/work/raspicamera
+ExecStart=/home/pi/work/raspicamera/bin/camera_start
+Restart=no
+User=pi
+Group=pi
+
+[Install]
+WantedBy=multi-user.target
+
