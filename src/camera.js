@@ -78,8 +78,7 @@ async function processPhoto(request) {
 
     // 写真撮影&サムネイル作成
     try {
-        await photo.getPhoto(imgFn);
-        await photo.getThumbnail(imgFn, thumbFn);
+        await photo.getPhoto(imgFn, thumbFn);
     } catch(err) {
         util.handleError(err, "写真撮影に失敗");
     }
