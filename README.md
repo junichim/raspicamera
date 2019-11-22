@@ -9,7 +9,7 @@ LINEからラズパイカメラで撮影するアプリ
 ├── README.md        
 ├── bin
 │   ├── build           zip パッケージの作成スクリプト
-│   ├── camera_start    カメラ処理起動スクリプト
+│   ├── camera_start    カメラサーバー起動スクリプト
 │   ├── deployLambdas   Lambda 関数デプロイ用スクリプト
 │   └── setLambdaEnv    Lambda 関数の環境変数設定用スクリプト
 ├── etc
@@ -55,7 +55,12 @@ Lambdaへのデプロイ
 ./bin/setLambdaEnv aws_profile_name src/.env
 ```
 
-Raspberry Pi での自動起動
+Raspberry Pi でカメラサーバーを起動
+```bash
+./bin/camera_start
+```
+
+Raspberry Pi でのカメラサーバーの自動起動
 ```bash
 sudo mkdir /var/log/camera-server
 sudo cp -p ./etc/camera-server.service /etc/systemd/system/
