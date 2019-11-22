@@ -21,6 +21,7 @@ const PHOTO_BASE_URL = process.env.PHOTO_BASE_URL;
 setInterval(main, PERIOD);
 
 async function main() {
+    console.log("start: " + moment().utcOffset(constant.JST).format(constant.DATE_FMT.S3_FILENAME_FMT));
 
     // S3 ファイルチェック
     let data;
@@ -29,7 +30,8 @@ async function main() {
     } catch (err) {
         util.handleError(err, "写真撮影リクエストの取得失敗");
     }
-    console.log("S3 request files: " + JSON.stringify(data));
+    //console.log("S3 request files: " + JSON.stringify(data));
+    console.log("S3 request num: " + data.Contents.length);
 
     // 撮影指示ファイル分だけループ
     for (let content of data.Contents) {
@@ -115,7 +117,7 @@ async function getRequestsList() {
         "Prefix": constant.FILE_PRFX.REQUEST_PRFX,
     };
 
-    console.log("getRequestsList param: " + JSON.stringify(param));
+    //console.log("getRequestsList param: " + JSON.stringify(param));
     let data;
     try {
         data = await s3.list(param);
@@ -131,14 +133,14 @@ async function getRequest(content) {
         "Key": content.Key,
     };
 
-    console.log("getRequest param: " + JSON.stringify(param));
+    //console.log("getRequest param: " + JSON.stringify(param));
     let data;
     try {
         data = await s3.get(param);
     } catch(err) {
         util.handleError(err, "S3 内のファイル取得失敗");
     }    
-    console.log("data: " + JSON.stringify(data));
+    //console.log("data: " + JSON.stringify(data));
     return JSON.parse(data.Body.toString());
 }
 
@@ -148,7 +150,7 @@ async function deleteRequest(content) {
         "Key": content.Key,
     };
 
-    console.log("deleteRequest param: " + JSON.stringify(param));
+    //console.log("deleteRequest param: " + JSON.stringify(param));
     try {
         await s3.delete(param);
     } catch(err) {
@@ -170,7 +172,7 @@ async function uploadImage(fn) {
         "Body": fileStream,
     };
     
-    console.log("uploadImage param: " + JSON.stringify(param));
+    //console.log("uploadImage param: " + JSON.stringify(param));
     try {
         await s3.upload(param);
     } catch(err) {
