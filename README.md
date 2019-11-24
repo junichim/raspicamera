@@ -1,6 +1,9 @@
 # raspi camera
 LINEからラズパイカメラで撮影するアプリ
 
+ブログ記事
+* [Raspberry Pi Zero ＋ カメラ で遊んでみました (1/2)](https://blog.mori-soft.com/entry/2019/11/23/231853)
+* [Raspberry Pi Zero ＋ カメラ で遊んでみました (2/2)](https://blog.mori-soft.com/entry/2019/11/23/231949)
 
 ## フォルダ構成
 
