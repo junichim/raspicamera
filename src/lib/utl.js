@@ -3,6 +3,22 @@
 
 const crypto = require("crypto");
 
+async function sleep (term) {
+    return new Promise((resolve, reject) => {
+        setTimeout(resolve, term);
+    });
+}
+exports.sleep = sleep
+
+exports.interval = async function (callback, term) {
+    while(true) {
+        //const st_dt = Date.now();
+        //console.log("start");
+        await Promise.all([callback(), sleep(term)]);
+        //console.log("end. elapsed is " + (Date.now() - st_dt));
+    }
+}
+
 exports.getHash = function (str) {
     let sha256 = crypto.createHash("sha256");
     sha256.update(str);

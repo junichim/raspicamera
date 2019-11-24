@@ -18,7 +18,11 @@ const IMAGE_EXT = ".jpg";
 const PHOTO_BASE_URL = process.env.PHOTO_BASE_URL;
 
 // ループ開始
-setInterval(main, PERIOD);
+exec_main();
+
+async function exec_main() {
+    await util.interval(main, PERIOD);
+}
 
 async function main() {
 
