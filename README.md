@@ -74,3 +74,5 @@ sudo systemctl enable camera-server
 sudo systemctl start camera-server
 ```
 
+# ライセンス
+本アプリは Apache 2.0 License です。
