@@ -17,6 +17,9 @@ const IMAGE_EXT = ".jpg";
 
 const PHOTO_BASE_URL = process.env.PHOTO_BASE_URL;
 
+const TARGET_HOURS = 1;                   // 有効期限（時間）
+const TARGET_MINUTES = TARGET_HOURS * 60; // 有効期限（分）
+
 // ループ開始
 exec_main();
 
@@ -61,7 +64,12 @@ async function processRequest(content) {
     // 写真撮影処理
     // 成否にかかわらず、撮影指示は削除する
     try {
-        await processPhoto(request);
+        let timeDiff = moment().utcOffset(constant.JST).diff(moment(request.date).utcOffset(constant.JST), 'minutes');
+        if (timeDiff > TARGET_MINUTES) {
+            console.warn("撮影指示が一定時間(" + TARGET_MINUTES + " min )以上過去のため破棄します: " + timeDiff + " min 前");
+        } else {
+            await processPhoto(request);
+        }
     } catch (err) {
         console.error("写真撮影処理に失敗: " + JSON.stringify(err));
     } finally {
