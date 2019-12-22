@@ -74,5 +74,10 @@ sudo systemctl enable camera-server
 sudo systemctl start camera-server
 ```
 
+# 発表資料
+
+Slideshare
+https://www.slideshare.net/junichim/201912-line
+
 # ライセンス
 本アプリは Apache 2.0 License です。
